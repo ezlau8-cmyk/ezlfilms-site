@@ -1,28 +1,17 @@
 <!--
-  EZL Films — Carrd page
-  Palette: Burnt Orange #C04A1A · Black #0A0908 · Cream #F2E8D5
-  Tagline: Real Stories. Real People.
-  Aesthetic: A24 / Blade Runner 2049 — cinematic, moody, film-grain
+  EZL Films — Carrd page (v2: A24-style scroll animations + custom typography)
 
-  HOW TO DEPLOY (5 min):
-  1. Sign up at carrd.co (free tier, no card)
-  2. New site → from scratch → choose "Blank"
-  3. Click "Settings" → "Code Injection" (Pro) OR use Container element with HTML embed
-     - Free tier: Container > Type=HTML > paste this whole file
-     - Pro tier ($19/yr): use Code Injection for site-wide CSS
-  4. Upload your hero reel to Vimeo (free), get the embed URL, replace HERO_REEL_SRC below
-  5. Add your portfolio Vimeo URLs where the WORK slots say PASTE_VIMEO_URL_HERE
-  6. Update CONTACT_EMAIL below
-  7. Publish. Free URL = ezlfilms.carrd.co
+  CHANGES IN v2:
+    - Real serif display font: Cormorant Garamond (Google Fonts, free)
+    - Sans body font: Inter (Google Fonts, free)
+    - Scroll-triggered fade-up animations via IntersectionObserver
+    - Stagger animations on work grid + pricing tiers
+    - Hero title character-reveal on page load
+    - Eyebrow tag underline-draw on scroll-in
+    - All polish stays within A24 restraint — no decorative noise
 
-  COLOR TOKENS (so you can tweak in one place later):
-  --orange: #C04A1A   (deep burnt)
-  --orange-glow: #E8632C  (hover/accent)
-  --black: #0A0908
-  --ink: #1A1815      (slightly raised black for cards)
-  --cream: #F2E8D5
-  --cream-dim: #C9BFA9  (secondary text)
-  --line: #2A2520      (subtle borders)
+  PALETTE (unchanged):
+    Burnt Orange #C04A1A · Black #0A0908 · Cream #F2E8D5
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -31,32 +20,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>EZL Films — Real Stories. Real People.</title>
 <meta name="description" content="Cinematic short-form video for SoCal small businesses. Filmed on Lumix S5II. Based in LA." />
+
+<!-- Google Fonts: Cormorant Garamond (display) + Inter (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
 <style>
-  /* ---------- RESET ---------- */
+  /* ================================================================
+     RESET + TOKENS
+     ================================================================ */
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Helvetica Neue', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0A0908;
-    color: #F2E8D5;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-
-  /* ---------- FILM GRAIN OVERLAY ---------- */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0.07;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  }
-
-  /* ---------- TOKENS ---------- */
   :root {
     --orange: #C04A1A;
     --orange-glow: #E8632C;
@@ -66,29 +44,284 @@
     --cream-dim: #C9BFA9;
     --line: #2A2520;
     --max: 1200px;
+    --serif: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+    --sans: 'Inter', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
-  /* ---------- TYPOGRAPHY ---------- */
+  body {
+    font-family: var(--sans);
+    background: var(--black);
+    color: var(--cream);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ================================================================
+     FILM GRAIN OVERLAY (unchanged)
+     ================================================================ */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 998;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ================================================================
+     ANAMORPHIC LENS EFFECTS
+     Mimics vintage Helios / Panavision anamorphic glass:
+       - oval bokeh (horizontal stretch on out-of-focus highlights)
+       - horizontal lens-flare streaks
+       - chromatic aberration (RGB ghost on text)
+       - barrel vignette
+       - subtle gate weave (frame drift)
+       - slightly desaturated / soft contrast (vintage creaminess)
+     ================================================================ */
+
+  /* Slight desaturate + soft contrast — vintage glass isn't sharp */
+  body {
+    filter: saturate(0.92) contrast(0.96);
+  }
+
+  /* Gate weave: sub-1px drift every few seconds. Disabled by default
+     — toggle via the .gate-weave class on <body> if you want it.
+     Some users find it motion-sick inducing. Default OFF. */
+  body.gate-weave {
+    animation: gateWeave 7s ease-in-out infinite;
+  }
+  @keyframes gateWeave {
+    0%, 100% { transform: translate(0, 0); }
+    25%      { transform: translate(0.6px, -0.4px); }
+    50%      { transform: translate(-0.5px, 0.5px); }
+    75%      { transform: translate(0.4px, 0.3px); }
+  }
+
+  /* Oval bokeh: 6 large radial-gradient blobs that drift slowly.
+     Each is horizontally stretched to mimic oval bokeh highlights.
+     z-index 996 keeps them above content but below grain. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: -20%;
+    pointer-events: none;
+    z-index: 996;
+    opacity: 0.55;
+    background:
+      radial-gradient(ellipse 220px 80px at 18% 24%, rgba(232,99,44,0.28), transparent 60%),
+      radial-gradient(ellipse 180px 60px at 82% 38%, rgba(192,74,26,0.22), transparent 65%),
+      radial-gradient(ellipse 240px 90px at 12% 78%, rgba(232,99,44,0.18), transparent 60%),
+      radial-gradient(ellipse 200px 70px at 88% 72%, rgba(192,74,26,0.20), transparent 65%),
+      radial-gradient(ellipse 160px 50px at 50% 12%, rgba(242,232,213,0.10), transparent 70%),
+      radial-gradient(ellipse 160px 50px at 50% 92%, rgba(242,232,213,0.08), transparent 70%);
+    animation: bokehDrift 32s ease-in-out infinite alternate;
+  }
+  @keyframes bokehDrift {
+    0%   { transform: translate(0, 0)         scale(1);    }
+    50%  { transform: translate(2%, -1.5%)   scale(1.04); }
+    100% { transform: translate(-2%, 1.5%)   scale(1.02); }
+  }
+
+  /* Barrel vignette: darker corners, brighter center. */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 997;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 35%,
+      rgba(10,9,8,0.35) 75%,
+      rgba(10,9,8,0.7) 100%
+    );
+  }
+
+  /* Horizontal lens flare streak — only inside the hero.
+     Sweeps left to right every ~8s, very subtle. */
+  .lens-flare {
+    position: absolute;
+    left: -40%;
+    top: 38%;
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(232,99,44,0.0) 10%,
+      rgba(232,99,44,0.6) 50%,
+      rgba(242,232,213,0.9) 60%,
+      rgba(232,99,44,0.6) 70%,
+      rgba(232,99,44,0.0) 90%,
+      transparent 100%);
+    filter: blur(1px);
+    animation: flareSweep 9s ease-in-out infinite;
+    animation-delay: 1.5s;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .lens-flare.secondary {
+    top: 62%;
+    width: 40%;
+    animation-delay: 4.5s;
+    animation-duration: 12s;
+    opacity: 0.6;
+  }
+  @keyframes flareSweep {
+    0%   { left: -60%; opacity: 0; }
+    10%  { opacity: 1; }
+    50%  { left: 110%;  opacity: 1; }
+    51%  { opacity: 0; }
+    100% { left: 110%;  opacity: 0; }
+  }
+
+  /* Chromatic aberration on the hero headline.
+     Three layered text-shadows offset by RGB. Strength grows toward edges. */
+  .hero h1 {
+    text-shadow:
+      2px 0 0 rgba(192, 74, 26, 0.35),
+      -2px 0 0 rgba(202, 232, 213, 0.25);
+  }
+  .hero h1 em {
+    text-shadow:
+      3px 0 0 rgba(192, 74, 26, 0.45),
+      -3px 0 0 rgba(202, 232, 213, 0.30);
+  }
+
+  /* Subtle barrel distortion on hero block — verticals bow very slightly.
+     Uses CSS transform; this is a visual approximation, not real distortion. */
+  .hero .wrap {
+    transform: perspective(2400px) rotateY(0.4deg) scaleX(1.005);
+    transform-origin: 50% 50%;
+  }
+
+  /* Honor reduced motion — disable all lens-flare animations */
+  @media (prefers-reduced-motion: reduce) {
+    body::after, body.gate-weave, .lens-flare { animation: none !important; }
+    body { filter: saturate(1) contrast(1); }
+    .hero .wrap { transform: none; }
+    .hero h1, .hero h1 em { text-shadow: none; }
+  }
+
+  /* ================================================================
+     TYPOGRAPHY (new: real fonts)
+     ================================================================ */
   .display {
-    font-family: 'Times New Roman', 'Didot', Georgia, serif;
+    font-family: var(--serif);
     font-weight: 400;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
     line-height: 0.95;
   }
   .eyebrow {
-    font-family: 'Helvetica Neue', 'Inter', sans-serif;
+    font-family: var(--sans);
     font-size: 11px;
     letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--orange);
     font-weight: 500;
+    display: inline-block;
+    position: relative;
+    padding-bottom: 6px;
   }
 
-  /* ---------- LAYOUT ---------- */
+  /* Eyebrow underline-draw animation */
+  .eyebrow::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 0;
+    background: var(--orange);
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+  }
+  .in-view .eyebrow::after {
+    width: 32px;
+  }
+
+  /* ================================================================
+     SCROLL REVEAL ANIMATIONS (new)
+     ================================================================ */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger helpers for grids */
+  .stagger > * {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .stagger.in-view > *:nth-child(1) { transition-delay: 0.00s; opacity: 1; transform: translateY(0); }
+  .stagger.in-view > *:nth-child(2) { transition-delay: 0.10s; opacity: 1; transform: translateY(0); }
+  .stagger.in-view > *:nth-child(3) { transition-delay: 0.20s; opacity: 1; transform: translateY(0); }
+  .stagger.in-view > *:nth-child(4) { transition-delay: 0.30s; opacity: 1; transform: translateY(0); }
+  .stagger.in-view > *:nth-child(5) { transition-delay: 0.40s; opacity: 1; transform: translateY(0); }
+  .stagger.in-view > *:nth-child(6) { transition-delay: 0.50s; opacity: 1; transform: translateY(0); }
+
+  /* Hero: character-reveal on the giant headline */
+  .hero h1 .char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px) rotateX(-30deg);
+    transform-origin: 50% 100%;
+    animation: charIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes charIn {
+    to { opacity: 1; transform: translateY(0) rotateX(0); }
+  }
+
+  /* Tagline fades in after the title finishes */
+  .hero .tagline,
+  .hero .hero-cta,
+  .hero .reel-frame {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .hero .tagline       { animation-delay: 1.6s; }
+  .hero .hero-cta      { animation-delay: 1.9s; }
+  .hero .reel-frame    { animation-delay: 2.2s; }
+  .hero .eyebrow       { opacity: 0; animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Honor user motion preferences — disable all animations if requested */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+    }
+    .reveal, .stagger > *, .hero .tagline, .hero .hero-cta, .hero .reel-frame, .hero .eyebrow, .hero h1 .char {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
+  /* ================================================================
+     LAYOUT (unchanged)
+     ================================================================ */
   .wrap { max-width: var(--max); margin: 0 auto; padding: 0 32px; }
   section { padding: 120px 0; position: relative; }
 
-  /* ---------- NAV ---------- */
+  /* ================================================================
+     NAV (slight refinement: tighter letter-spacing on logo)
+     ================================================================ */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -101,12 +334,17 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(192,74,26,0.12);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(10,9,8,0.92);
+    border-bottom-color: rgba(192,74,26,0.24);
   }
   nav .logo {
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: var(--sans);
     font-weight: 700;
-    font-size: 15px;
-    letter-spacing: 0.34em;
+    font-size: 13px;
+    letter-spacing: 0.36em;
     color: var(--cream);
   }
   nav .logo span { color: var(--orange); }
@@ -114,17 +352,30 @@
   nav .nav-links a {
     color: var(--cream-dim);
     text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 0.18em;
+    font-size: 11px;
+    letter-spacing: 0.20em;
     text-transform: uppercase;
     transition: color 0.25s;
+    position: relative;
+  }
+  nav .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -4px;
+    width: 0;
+    height: 1px;
+    background: var(--orange-glow);
+    transition: width 0.3s ease;
   }
   nav .nav-links a:hover { color: var(--orange-glow); }
+  nav .nav-links a:hover::after { width: 100%; }
   @media (max-width: 720px) {
     nav .nav-links { display: none; }
   }
 
-  /* ---------- HERO ---------- */
+  /* ================================================================
+     HERO
+     ================================================================ */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -145,13 +396,16 @@
     font-size: clamp(48px, 9vw, 140px);
     margin-bottom: 28px;
     max-width: 1000px;
+    /* preserve line breaks between inline-block .char spans */
+    line-height: 1.05;
   }
   .hero h1 em {
     font-style: italic;
     color: var(--orange);
   }
+  .hero h1 br { line-height: 0; }
   .hero .tagline {
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: var(--serif);
     font-style: italic;
     font-size: clamp(18px, 2vw, 24px);
     color: var(--cream-dim);
@@ -179,9 +433,12 @@
     color: var(--orange-glow);
     border-color: var(--orange-glow);
   }
-  .hero-cta .arrow { font-size: 16px; }
+  .hero-cta .arrow { font-size: 16px; transition: transform 0.3s; }
+  .hero-cta:hover .arrow { transform: translateX(4px); }
 
-  /* ---------- HERO REEL ---------- */
+  /* ================================================================
+     HERO REEL
+     ================================================================ */
   .reel-frame {
     margin-top: 96px;
     aspect-ratio: 16/9;
@@ -212,7 +469,7 @@
       repeating-linear-gradient(45deg, transparent 0 12px, rgba(192,74,26,0.04) 12px 13px);
   }
   .reel-placeholder .mark {
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: var(--serif);
     font-style: italic;
     font-size: 24px;
     color: var(--orange);
@@ -223,7 +480,9 @@
     text-transform: uppercase;
   }
 
-  /* ---------- DIVIDER ---------- */
+  /* ================================================================
+     DIVIDER
+     ================================================================ */
   .divider {
     width: 100%;
     height: 1px;
@@ -231,7 +490,9 @@
     margin: 0;
   }
 
-  /* ---------- SECTION HEAD ---------- */
+  /* ================================================================
+     SECTION HEADS
+     ================================================================ */
   .section-head {
     display: flex;
     justify-content: space-between;
@@ -251,7 +512,9 @@
     text-transform: uppercase;
   }
 
-  /* ---------- WORK GRID ---------- */
+  /* ================================================================
+     WORK GRID
+     ================================================================ */
   .work-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -304,7 +567,7 @@
     align-items: center;
   }
   .work-card .meta .title {
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: var(--serif);
     font-size: 20px;
     color: var(--cream);
   }
@@ -315,7 +578,9 @@
     color: var(--orange);
   }
 
-  /* ---------- ABOUT ---------- */
+  /* ================================================================
+     ABOUT
+     ================================================================ */
   .about {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
@@ -352,7 +617,7 @@
   .about p strong { color: var(--cream); font-weight: 500; }
   .about .signature {
     margin-top: 36px;
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: var(--serif);
     font-style: italic;
     color: var(--orange);
     font-size: 22px;
@@ -367,7 +632,9 @@
     color: var(--cream-dim);
   }
 
-  /* ---------- PACKAGES ---------- */
+  /* ================================================================
+     PACKAGES
+     ================================================================ */
   .packages {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -388,6 +655,7 @@
   .pkg:hover {
     border-color: var(--orange);
     background: linear-gradient(180deg, var(--ink), rgba(192,74,26,0.06));
+    transform: translateY(-4px);
   }
   .pkg.featured {
     border-color: var(--orange);
@@ -412,7 +680,7 @@
     margin-bottom: 24px;
   }
   .pkg .price {
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: var(--serif);
     font-size: 64px;
     color: var(--cream);
     line-height: 1;
@@ -469,7 +737,9 @@
     border-color: var(--orange-glow);
   }
 
-  /* ---------- CONTACT ---------- */
+  /* ================================================================
+     CONTACT
+     ================================================================ */
   .contact-inner {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -493,12 +763,13 @@
     display: inline-block;
     margin-top: 24px;
     color: var(--orange);
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: var(--serif);
     font-style: italic;
     font-size: 22px;
     text-decoration: none;
     border-bottom: 1px solid var(--orange);
     padding-bottom: 4px;
+    transition: color 0.3s, border-color 0.3s;
   }
   .contact .email-link:hover { color: var(--orange-glow); border-color: var(--orange-glow); }
 
@@ -545,7 +816,9 @@
   }
   .contact-form button:hover { background: var(--orange-glow); }
 
-  /* ---------- FOOTER ---------- */
+  /* ================================================================
+     FOOTER
+     ================================================================ */
   footer {
     padding: 60px 0 40px;
     border-top: 1px solid var(--line);
@@ -574,7 +847,9 @@
   }
   footer .socials a:hover { color: var(--orange); }
 
-  /* ---------- RESPONSIVE ---------- */
+  /* ================================================================
+     RESPONSIVE
+     ================================================================ */
   @media (max-width: 600px) {
     section { padding: 80px 0; }
     .wrap { padding: 0 20px; }
@@ -584,8 +859,11 @@
 </head>
 <body>
 
+<!-- Anamorphic vignette overlay -->
+<div class="vignette"></div>
+
 <!-- ============ NAV ============ -->
-<nav>
+<nav id="nav">
   <div class="logo">EZL<span>·</span>FILMS</div>
   <div class="nav-links">
     <a href="#work">Work</a>
@@ -598,14 +876,17 @@
 <!-- ============ HERO ============ -->
 <header class="hero">
   <div class="wrap">
+    <!-- Anamorphic lens flare streaks (hero only) -->
+    <div class="lens-flare"></div>
+    <div class="lens-flare secondary"></div>
+
     <div class="eyebrow">Cinematic Short-Form Video · Los Angeles</div>
-    <h1 class="display">Real Stories.<br/><em>Real People.</em></h1>
+    <h1 class="display"><span class="title-line">Real Stories.</span><br/><em><span class="title-line">Real People.</span></em></h1>
     <p class="tagline">A SoCal filmmaker shooting cinematic 30-second stories for small businesses, founders, and the people behind them.</p>
     <a href="#contact" class="hero-cta">Start a Project <span class="arrow">→</span></a>
 
     <div class="reel-frame">
       <!-- REPLACE HERO_REEL_SRC WITH YOUR VIMEO/VIDEO URL -->
-      <!-- Vimeo example: src="https://player.vimeo.com/video/XXXXXXXXX?autoplay=1&loop=1&muted=1&background=1" -->
       <div class="reel-placeholder">
         <div class="mark">[ Hero Reel ]</div>
         <div class="sub">Drop your Vimeo embed here</div>
@@ -619,7 +900,7 @@
 <!-- ============ WORK ============ -->
 <section id="work">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div>
         <div class="eyebrow" style="margin-bottom: 16px;">Selected Work</div>
         <h2 class="display">Recent<br/>Projects.</h2>
@@ -627,10 +908,9 @@
       <div class="meta">2024 — 2026</div>
     </div>
 
-    <div class="work-grid">
+    <div class="work-grid stagger">
       <div class="work-card">
         <div class="thumb">
-          <!-- PASTE_VIMEO_URL_HERE -->
           <div class="thumb-empty">Drop reel #1 here</div>
         </div>
         <div class="meta">
@@ -678,11 +958,10 @@
 <section id="about">
   <div class="wrap">
     <div class="about">
-      <div class="portrait">
-        <!-- Drop your headshot or behind-the-scenes photo here -->
+      <div class="portrait reveal">
         <div class="portrait-empty">Your photo here</div>
       </div>
-      <div>
+      <div class="reveal">
         <div class="eyebrow" style="margin-bottom: 16px;">About</div>
         <h2 class="display" style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 32px;">Filmmaker<br/>in Los Angeles.</h2>
         <p>Hi, I'm <strong>Ethan</strong> — a filmmaker based in LA. I shoot cinematic, short-form video for small businesses that hate looking like everyone else.</p>
@@ -700,7 +979,7 @@
 <!-- ============ PACKAGES ============ -->
 <section id="packages">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div>
         <div class="eyebrow" style="margin-bottom: 16px;">Services</div>
         <h2 class="display">Three ways<br/>to work together.</h2>
@@ -708,7 +987,7 @@
       <div class="meta">No hidden fees · 50% deposit on booking</div>
     </div>
 
-    <div class="packages">
+    <div class="packages stagger">
       <div class="pkg">
         <div class="name">Cut</div>
         <div class="price">$400</div>
@@ -760,17 +1039,15 @@
 <section id="contact" class="contact">
   <div class="wrap">
     <div class="contact-inner">
-      <div>
+      <div class="reveal">
         <div class="eyebrow" style="margin-bottom: 16px;">Contact</div>
         <h2 class="display">Let's make<br/>something.</h2>
         <p>Tell me what you're working on. I'll reply within 24 hours with a price and a date.</p>
         <p>Or just say hi — I'm always down to talk shop.</p>
         <a href="mailto:hello@ezlfilms.com" class="email-link">hello@ezlfilms.com</a>
-        <!-- ↑↑↑ REPLACE WITH YOUR REAL EMAIL ↑↑↑ -->
       </div>
 
-      <form class="contact-form" action="https://formspree.io/f/REPLACE_FORM_ID" method="POST">
-        <!-- ↑↑↑ Sign up at formspree.io (free), get form ID, paste here ↑↑↑ -->
+      <form class="contact-form reveal" action="https://formspree.io/f/REPLACE_FORM_ID" method="POST">
         <div>
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required />
@@ -810,6 +1087,54 @@
     </div>
   </div>
 </footer>
+
+<!-- ============ SCROLL REVEAL + CHARACTER SPLIT + NAV STATE ============ -->
+<script>
+(function () {
+  // Split hero title into individual characters for the typewriter-style reveal
+  var titleLines = document.querySelectorAll('.hero h1 .title-line');
+  titleLines.forEach(function (line) {
+    var text = line.textContent;
+    line.textContent = '';
+    var chars = text.split('');
+    chars.forEach(function (ch, i) {
+      var span = document.createElement('span');
+      span.className = 'char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      // Stagger 30ms per character, with a slight delay for the second line
+      var baseDelay = line.closest('em') ? 1.0 : 0.6;
+      span.style.animationDelay = (baseDelay + i * 0.03) + 's';
+      line.appendChild(span);
+    });
+  });
+
+  // IntersectionObserver: add .in-view when elements enter viewport
+  var revealEls = document.querySelectorAll('.reveal, .stagger');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    // Fallback: just show everything
+    revealEls.forEach(function (el) { el.classList.add('in-view'); });
+  }
+
+  // Nav background strengthens once user has scrolled past the hero
+  var nav = document.getElementById('nav');
+  function onScroll() {
+    if (window.scrollY > 80) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
 
 </body>
 </html>
