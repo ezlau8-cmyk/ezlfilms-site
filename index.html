@@ -1,0 +1,815 @@
+<!--
+  EZL Films — Carrd page
+  Palette: Burnt Orange #C04A1A · Black #0A0908 · Cream #F2E8D5
+  Tagline: Real Stories. Real People.
+  Aesthetic: A24 / Blade Runner 2049 — cinematic, moody, film-grain
+
+  HOW TO DEPLOY (5 min):
+  1. Sign up at carrd.co (free tier, no card)
+  2. New site → from scratch → choose "Blank"
+  3. Click "Settings" → "Code Injection" (Pro) OR use Container element with HTML embed
+     - Free tier: Container > Type=HTML > paste this whole file
+     - Pro tier ($19/yr): use Code Injection for site-wide CSS
+  4. Upload your hero reel to Vimeo (free), get the embed URL, replace HERO_REEL_SRC below
+  5. Add your portfolio Vimeo URLs where the WORK slots say PASTE_VIMEO_URL_HERE
+  6. Update CONTACT_EMAIL below
+  7. Publish. Free URL = ezlfilms.carrd.co
+
+  COLOR TOKENS (so you can tweak in one place later):
+  --orange: #C04A1A   (deep burnt)
+  --orange-glow: #E8632C  (hover/accent)
+  --black: #0A0908
+  --ink: #1A1815      (slightly raised black for cards)
+  --cream: #F2E8D5
+  --cream-dim: #C9BFA9  (secondary text)
+  --line: #2A2520      (subtle borders)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EZL Films — Real Stories. Real People.</title>
+<meta name="description" content="Cinematic short-form video for SoCal small businesses. Filmed on Lumix S5II. Based in LA." />
+<style>
+  /* ---------- RESET ---------- */
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Helvetica Neue', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0A0908;
+    color: #F2E8D5;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ---------- FILM GRAIN OVERLAY ---------- */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ---------- TOKENS ---------- */
+  :root {
+    --orange: #C04A1A;
+    --orange-glow: #E8632C;
+    --black: #0A0908;
+    --ink: #1A1815;
+    --cream: #F2E8D5;
+    --cream-dim: #C9BFA9;
+    --line: #2A2520;
+    --max: 1200px;
+  }
+
+  /* ---------- TYPOGRAPHY ---------- */
+  .display {
+    font-family: 'Times New Roman', 'Didot', Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+  .eyebrow {
+    font-family: 'Helvetica Neue', 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--orange);
+    font-weight: 500;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 32px; }
+  section { padding: 120px 0; position: relative; }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10,9,8,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(192,74,26,0.12);
+  }
+  nav .logo {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.34em;
+    color: var(--cream);
+  }
+  nav .logo span { color: var(--orange); }
+  nav .nav-links { display: flex; gap: 28px; }
+  nav .nav-links a {
+    color: var(--cream-dim);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition: color 0.25s;
+  }
+  nav .nav-links a:hover { color: var(--orange-glow); }
+  @media (max-width: 720px) {
+    nav .nav-links { display: none; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 0 80px;
+    position: relative;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, rgba(192,74,26,0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .hero .eyebrow { margin-bottom: 24px; }
+  .hero h1 {
+    font-size: clamp(48px, 9vw, 140px);
+    margin-bottom: 28px;
+    max-width: 1000px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--orange);
+  }
+  .hero .tagline {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(18px, 2vw, 24px);
+    color: var(--cream-dim);
+    max-width: 540px;
+    margin-bottom: 56px;
+    line-height: 1.4;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 36px;
+    background: var(--orange);
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: 1px solid var(--orange);
+  }
+  .hero-cta:hover {
+    background: transparent;
+    color: var(--orange-glow);
+    border-color: var(--orange-glow);
+  }
+  .hero-cta .arrow { font-size: 16px; }
+
+  /* ---------- HERO REEL ---------- */
+  .reel-frame {
+    margin-top: 96px;
+    aspect-ratio: 16/9;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    position: relative;
+  }
+  .reel-frame iframe,
+  .reel-frame video {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    object-fit: cover;
+  }
+  .reel-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    color: var(--cream-dim);
+    background:
+      linear-gradient(135deg, rgba(192,74,26,0.06), transparent),
+      repeating-linear-gradient(45deg, transparent 0 12px, rgba(192,74,26,0.04) 12px 13px);
+  }
+  .reel-placeholder .mark {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-style: italic;
+    font-size: 24px;
+    color: var(--orange);
+  }
+  .reel-placeholder .sub {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- DIVIDER ---------- */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line) 50%, transparent);
+    margin: 0;
+  }
+
+  /* ---------- SECTION HEAD ---------- */
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 64px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .section-head h2 {
+    font-size: clamp(36px, 5vw, 64px);
+    max-width: 700px;
+  }
+  .section-head .meta {
+    color: var(--cream-dim);
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- WORK GRID ---------- */
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+  @media (max-width: 760px) {
+    .work-grid { grid-template-columns: 1fr; }
+  }
+  .work-card {
+    background: var(--ink);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    transition: all 0.4s;
+    position: relative;
+  }
+  .work-card:hover {
+    border-color: var(--orange);
+    transform: translateY(-4px);
+  }
+  .work-card .thumb {
+    aspect-ratio: 9/16;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+  .work-card .thumb iframe,
+  .work-card .thumb video {
+    width: 100%; height: 100%; border: 0;
+    object-fit: cover;
+    display: block;
+  }
+  .work-card .thumb-empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cream-dim);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    background:
+      linear-gradient(135deg, rgba(192,74,26,0.04), transparent),
+      repeating-linear-gradient(45deg, transparent 0 16px, rgba(192,74,26,0.04) 16px 17px);
+  }
+  .work-card .meta {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .work-card .meta .title {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 20px;
+    color: var(--cream);
+  }
+  .work-card .meta .cat {
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: center;
+  }
+  @media (max-width: 800px) {
+    .about { grid-template-columns: 1fr; gap: 40px; }
+  }
+  .about .portrait {
+    aspect-ratio: 3/4;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    position: relative;
+  }
+  .about .portrait-empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cream-dim);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+  .about p {
+    font-size: 17px;
+    color: var(--cream-dim);
+    margin-bottom: 20px;
+    max-width: 520px;
+  }
+  .about p strong { color: var(--cream); font-weight: 500; }
+  .about .signature {
+    margin-top: 36px;
+    font-family: 'Times New Roman', Georgia, serif;
+    font-style: italic;
+    color: var(--orange);
+    font-size: 22px;
+  }
+  .about .gear-list {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+  }
+
+  /* ---------- PACKAGES ---------- */
+  .packages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 900px) {
+    .packages { grid-template-columns: 1fr; }
+  }
+  .pkg {
+    background: var(--ink);
+    border: 1px solid var(--line);
+    padding: 40px 32px;
+    transition: all 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .pkg:hover {
+    border-color: var(--orange);
+    background: linear-gradient(180deg, var(--ink), rgba(192,74,26,0.06));
+  }
+  .pkg.featured {
+    border-color: var(--orange);
+  }
+  .pkg.featured::before {
+    content: "MOST BOOKED";
+    position: absolute;
+    top: -10px;
+    left: 32px;
+    background: var(--orange);
+    color: var(--cream);
+    padding: 4px 12px;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    font-weight: 600;
+  }
+  .pkg .name {
+    font-size: 13px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin-bottom: 24px;
+  }
+  .pkg .price {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 64px;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .pkg .price-note {
+    font-size: 12px;
+    color: var(--cream-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .pkg ul {
+    list-style: none;
+    margin-bottom: 32px;
+    flex-grow: 1;
+  }
+  .pkg ul li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--cream-dim);
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+  }
+  .pkg ul li::before {
+    content: "→";
+    color: var(--orange);
+  }
+  .pkg ul li:last-child { border-bottom: 0; }
+  .pkg .pkg-cta {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid var(--cream-dim);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+  .pkg .pkg-cta:hover {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+  .pkg.featured .pkg-cta {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+  .pkg.featured .pkg-cta:hover {
+    background: var(--orange-glow);
+    border-color: var(--orange-glow);
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  @media (max-width: 800px) {
+    .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+  }
+  .contact h2 {
+    font-size: clamp(40px, 6vw, 80px);
+    margin-bottom: 32px;
+  }
+  .contact p {
+    font-size: 18px;
+    color: var(--cream-dim);
+    margin-bottom: 16px;
+    max-width: 480px;
+  }
+  .contact .email-link {
+    display: inline-block;
+    margin-top: 24px;
+    color: var(--orange);
+    font-family: 'Times New Roman', Georgia, serif;
+    font-style: italic;
+    font-size: 22px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--orange);
+    padding-bottom: 4px;
+  }
+  .contact .email-link:hover { color: var(--orange-glow); border-color: var(--orange-glow); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 18px; }
+  .contact-form label {
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form select {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.3s;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus,
+  .contact-form select:focus {
+    outline: 0;
+    border-color: var(--orange);
+  }
+  .contact-form textarea { min-height: 120px; resize: vertical; }
+  .contact-form button {
+    padding: 16px;
+    background: var(--orange);
+    color: var(--cream);
+    border: 0;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .contact-form button:hover { background: var(--orange-glow); }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--line);
+    margin-top: 60px;
+  }
+  footer .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer .copy {
+    color: var(--cream-dim);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+  }
+  footer .socials { display: flex; gap: 24px; }
+  footer .socials a {
+    color: var(--cream-dim);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  footer .socials a:hover { color: var(--orange); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 600px) {
+    section { padding: 80px 0; }
+    .wrap { padding: 0 20px; }
+    nav { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="logo">EZL<span>·</span>FILMS</div>
+  <div class="nav-links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#packages">Services</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Cinematic Short-Form Video · Los Angeles</div>
+    <h1 class="display">Real Stories.<br/><em>Real People.</em></h1>
+    <p class="tagline">A SoCal filmmaker shooting cinematic 30-second stories for small businesses, founders, and the people behind them.</p>
+    <a href="#contact" class="hero-cta">Start a Project <span class="arrow">→</span></a>
+
+    <div class="reel-frame">
+      <!-- REPLACE HERO_REEL_SRC WITH YOUR VIMEO/VIDEO URL -->
+      <!-- Vimeo example: src="https://player.vimeo.com/video/XXXXXXXXX?autoplay=1&loop=1&muted=1&background=1" -->
+      <div class="reel-placeholder">
+        <div class="mark">[ Hero Reel ]</div>
+        <div class="sub">Drop your Vimeo embed here</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- ============ WORK ============ -->
+<section id="work">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">Selected Work</div>
+        <h2 class="display">Recent<br/>Projects.</h2>
+      </div>
+      <div class="meta">2024 — 2026</div>
+    </div>
+
+    <div class="work-grid">
+      <div class="work-card">
+        <div class="thumb">
+          <!-- PASTE_VIMEO_URL_HERE -->
+          <div class="thumb-empty">Drop reel #1 here</div>
+        </div>
+        <div class="meta">
+          <div class="title">Project One</div>
+          <div class="cat">Restaurant</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="thumb">
+          <div class="thumb-empty">Drop reel #2 here</div>
+        </div>
+        <div class="meta">
+          <div class="title">Project Two</div>
+          <div class="cat">Founder</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="thumb">
+          <div class="thumb-empty">Drop reel #3 here</div>
+        </div>
+        <div class="meta">
+          <div class="title">Project Three</div>
+          <div class="cat">Real Estate</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="thumb">
+          <div class="thumb-empty">Drop reel #4 here</div>
+        </div>
+        <div class="meta">
+          <div class="title">Project Four</div>
+          <div class="cat">Creator</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="wrap">
+    <div class="about">
+      <div class="portrait">
+        <!-- Drop your headshot or behind-the-scenes photo here -->
+        <div class="portrait-empty">Your photo here</div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">About</div>
+        <h2 class="display" style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 32px;">Filmmaker<br/>in Los Angeles.</h2>
+        <p>I'm <strong>EZL</strong> — a filmmaker based in LA. I shoot cinematic, short-form video for small businesses that hate looking like everyone else.</p>
+        <p>Every project starts with one question: <strong>what's the real story?</strong> Not the polished version. The one people actually remember.</p>
+        <p>No templates. No stock footage. No AI slop. Just real footage, real light, and the camera doing what it was built to do.</p>
+        <div class="signature">— EZL</div>
+        <div class="gear-list">Lumix S5II · 16-35 / 24-70 / 50mm · LA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ PACKAGES ============ -->
+<section id="packages">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">Services</div>
+        <h2 class="display">Three ways<br/>to work together.</h2>
+      </div>
+      <div class="meta">No hidden fees · 50% deposit on booking</div>
+    </div>
+
+    <div class="packages">
+      <div class="pkg">
+        <div class="name">Cut</div>
+        <div class="price">$400</div>
+        <div class="price-note">One reel · 3-day turnaround</div>
+        <ul>
+          <li>60–90 min on-location shoot</li>
+          <li>1× 30-sec vertical reel (9:16)</li>
+          <li>Captions burned in</li>
+          <li>Color graded</li>
+          <li>Music licensed</li>
+          <li>1 round of revisions</li>
+        </ul>
+        <a href="#contact" class="pkg-cta">Book Cut</a>
+      </div>
+
+      <div class="pkg featured">
+        <div class="name">Cut+</div>
+        <div class="price">$800</div>
+        <div class="price-note">Reel + BTS · 5-day turnaround</div>
+        <ul>
+          <li>Everything in Cut</li>
+          <li>1× 60-sec story / BTS edit</li>
+          <li>Best for businesses with a real story</li>
+          <li>1 round of revisions</li>
+        </ul>
+        <a href="#contact" class="pkg-cta">Book Cut+</a>
+      </div>
+
+      <div class="pkg">
+        <div class="name">Content Day</div>
+        <div class="price">$1,500</div>
+        <div class="price-note">3-hour shoot · 7-day turnaround</div>
+        <ul>
+          <li>3-hour on-location shoot</li>
+          <li>4× 30-sec reels</li>
+          <li>30 color-graded stills</li>
+          <li>A month of content in one afternoon</li>
+          <li>1 round of revisions</li>
+        </ul>
+        <a href="#contact" class="pkg-cta">Book Content Day</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="contact">
+  <div class="wrap">
+    <div class="contact-inner">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">Contact</div>
+        <h2 class="display">Let's make<br/>something.</h2>
+        <p>Tell me what you're working on. I'll reply within 24 hours with a price and a date.</p>
+        <p>Or just say hi — I'm always down to talk shop.</p>
+        <a href="mailto:hello@ezlfilms.com" class="email-link">hello@ezlfilms.com</a>
+        <!-- ↑↑↑ REPLACE WITH YOUR REAL EMAIL ↑↑↑ -->
+      </div>
+
+      <form class="contact-form" action="https://formspree.io/f/REPLACE_FORM_ID" method="POST">
+        <!-- ↑↑↑ Sign up at formspree.io (free), get form ID, paste here ↑↑↑ -->
+        <div>
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div>
+          <label for="package">Interested in</label>
+          <select id="package" name="package">
+            <option value="">Pick one…</option>
+            <option value="cut">Cut — $400</option>
+            <option value="cut+">Cut+ — $800</option>
+            <option value="content-day">Content Day — $1,500</option>
+            <option value="custom">Something custom</option>
+          </select>
+        </div>
+        <div>
+          <label for="message">Tell me about it</label>
+          <textarea id="message" name="message" placeholder="What's your business? What story do you want to tell?"></textarea>
+        </div>
+        <button type="submit">Send →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="copy">© 2026 EZL Films · Los Angeles, CA</div>
+    <div class="socials">
+      <a href="https://instagram.com/ezlfilms" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://vimeo.com/ezlfilms" target="_blank" rel="noopener">Vimeo</a>
+      <a href="mailto:hello@ezlfilms.com">Email</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

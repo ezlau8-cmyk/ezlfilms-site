@@ -1,0 +1,14 @@
+# Local junk
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Editor
+.vscode/
+.idea/
+
+# Future deploy artifacts (won't exist yet)
+node_modules/
+.wrangler/
+.netlify/
