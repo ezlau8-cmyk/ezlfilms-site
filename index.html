@@ -1,25 +1,28 @@
 <!--
-  EZL Films — Carrd page (v2: A24-style scroll animations + custom typography)
+  EZL Films — v3 rebuild: real content, working embeds, live-event positioning
 
-  CHANGES IN v2:
-    - Real serif display font: Cormorant Garamond (Google Fonts, free)
-    - Sans body font: Inter (Google Fonts, free)
-    - Scroll-triggered fade-up animations via IntersectionObserver
-    - Stagger animations on work grid + pricing tiers
-    - Hero title character-reveal on page load
-    - Eyebrow tag underline-draw on scroll-in
-    - All polish stays within A24 restraint — no decorative noise
+  v3 CHANGES vs v2:
+    - Hero reel: real YouTube embed (v2 used a channel-handle embed that renders nothing)
+    - Work grid: 3 real playable videos + 1 CTA card (v2 had 4 fake placeholders)
+    - NEW Featured Case Study section: Flintridge Prep commission + school credit testimonial
+    - About: real copy, full gear list, monogram mark (v2 had "Your photo here")
+    - Positioning: live event coverage + short-form (v2: short-form only)
+    - Packages: third tier renamed to Event Day to match the live-event offer
+    - Meta description + OG tags updated
 
-  PALETTE (unchanged):
-    Burnt Orange #C04A1A · Black #0A0908 · Cream #F2E8D5
+  PALETTE (unchanged): Burnt Orange #C04A1A · Black #0A0908 · Cream #F2E8D5
 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EZL Films — Real Stories. Real People.</title>
-<meta name="description" content="Cinematic short-form video for SoCal small businesses. Filmed on Lumix S5II. Based in LA." />
+<title>EZL Films — Live Event Coverage &amp; Cinematic Short-Form · Los Angeles</title>
+<meta name="description" content="Cinematic video for SoCal businesses and institutions — live event coverage and short-form content that tells the real story. Lumix S5II + Sony FX3. Based in LA." />
+<meta property="og:title" content="EZL Films — Real Stories. Real People." />
+<meta property="og:description" content="Live event coverage and cinematic short-form video for SoCal businesses and institutions. Los Angeles." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://ezlfilms-site.pages.dev" />
 
 <!-- Google Fonts: Cormorant Garamond (display) + Inter (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -58,7 +61,7 @@
   }
 
   /* ================================================================
-     FILM GRAIN OVERLAY (unchanged)
+     FILM GRAIN OVERLAY
      ================================================================ */
   body::before {
     content: "";
@@ -73,26 +76,10 @@
 
   /* ================================================================
      ANAMORPHIC LENS EFFECTS
-     Mimics vintage Helios / Panavision anamorphic glass:
-       - oval bokeh (horizontal stretch on out-of-focus highlights)
-       - horizontal lens-flare streaks
-       - chromatic aberration (RGB ghost on text)
-       - barrel vignette
-       - subtle gate weave (frame drift)
-       - slightly desaturated / soft contrast (vintage creaminess)
      ================================================================ */
+  body { filter: saturate(0.92) contrast(0.96); }
 
-  /* Slight desaturate + soft contrast — vintage glass isn't sharp */
-  body {
-    filter: saturate(0.92) contrast(0.96);
-  }
-
-  /* Gate weave: sub-1px drift every few seconds. Disabled by default
-     — toggle via the .gate-weave class on <body> if you want it.
-     Some users find it motion-sick inducing. Default OFF. */
-  body.gate-weave {
-    animation: gateWeave 7s ease-in-out infinite;
-  }
+  body.gate-weave { animation: gateWeave 7s ease-in-out infinite; }
   @keyframes gateWeave {
     0%, 100% { transform: translate(0, 0); }
     25%      { transform: translate(0.6px, -0.4px); }
@@ -100,9 +87,6 @@
     75%      { transform: translate(0.4px, 0.3px); }
   }
 
-  /* Oval bokeh: 6 large radial-gradient blobs that drift slowly.
-     Each is horizontally stretched to mimic oval bokeh highlights.
-     z-index 996 keeps them above content but below grain. */
   body::after {
     content: "";
     position: fixed;
@@ -125,7 +109,6 @@
     100% { transform: translate(-2%, 1.5%)   scale(1.02); }
   }
 
-  /* Barrel vignette: darker corners, brighter center. */
   .vignette {
     position: fixed;
     inset: 0;
@@ -139,8 +122,6 @@
     );
   }
 
-  /* Horizontal lens flare streak — only inside the hero.
-     Sweeps left to right every ~8s, very subtle. */
   .lens-flare {
     position: absolute;
     left: -40%;
@@ -176,8 +157,6 @@
     100% { left: 110%;  opacity: 0; }
   }
 
-  /* Chromatic aberration on the hero headline.
-     Three layered text-shadows offset by RGB. Strength grows toward edges. */
   .hero h1 {
     text-shadow:
       2px 0 0 rgba(192, 74, 26, 0.35),
@@ -188,15 +167,11 @@
       3px 0 0 rgba(192, 74, 26, 0.45),
       -3px 0 0 rgba(202, 232, 213, 0.30);
   }
-
-  /* Subtle barrel distortion on hero block — verticals bow very slightly.
-     Uses CSS transform; this is a visual approximation, not real distortion. */
   .hero .wrap {
     transform: perspective(2400px) rotateY(0.4deg) scaleX(1.005);
     transform-origin: 50% 50%;
   }
 
-  /* Honor reduced motion — disable all lens-flare animations */
   @media (prefers-reduced-motion: reduce) {
     body::after, body.gate-weave, .lens-flare { animation: none !important; }
     body { filter: saturate(1) contrast(1); }
@@ -205,7 +180,7 @@
   }
 
   /* ================================================================
-     TYPOGRAPHY (new: real fonts)
+     TYPOGRAPHY
      ================================================================ */
   .display {
     font-family: var(--serif);
@@ -224,8 +199,6 @@
     position: relative;
     padding-bottom: 6px;
   }
-
-  /* Eyebrow underline-draw animation */
   .eyebrow::after {
     content: "";
     position: absolute;
@@ -236,12 +209,10 @@
     background: var(--orange);
     transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
   }
-  .in-view .eyebrow::after {
-    width: 32px;
-  }
+  .in-view .eyebrow::after { width: 32px; }
 
   /* ================================================================
-     SCROLL REVEAL ANIMATIONS (new)
+     SCROLL REVEAL
      ================================================================ */
   .reveal {
     opacity: 0;
@@ -250,12 +221,8 @@
       opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
       transform 1s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .reveal.in-view {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
 
-  /* Stagger helpers for grids */
   .stagger > * {
     opacity: 0;
     transform: translateY(24px);
@@ -270,7 +237,6 @@
   .stagger.in-view > *:nth-child(5) { transition-delay: 0.40s; opacity: 1; transform: translateY(0); }
   .stagger.in-view > *:nth-child(6) { transition-delay: 0.50s; opacity: 1; transform: translateY(0); }
 
-  /* Hero: character-reveal on the giant headline */
   .hero h1 .char {
     display: inline-block;
     opacity: 0;
@@ -282,10 +248,10 @@
     to { opacity: 1; transform: translateY(0) rotateX(0); }
   }
 
-  /* Tagline fades in after the title finishes */
   .hero .tagline,
   .hero .hero-cta,
-  .hero .reel-frame {
+  .hero .reel-frame,
+  .hero .creds {
     opacity: 0;
     transform: translateY(20px);
     animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -293,13 +259,11 @@
   .hero .tagline       { animation-delay: 1.6s; }
   .hero .hero-cta      { animation-delay: 1.9s; }
   .hero .reel-frame    { animation-delay: 2.2s; }
+  .hero .creds         { animation-delay: 2.5s; }
   .hero .eyebrow       { opacity: 0; animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
 
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-  /* Honor user motion preferences — disable all animations if requested */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -307,20 +271,20 @@
       transition-duration: 0.01ms !important;
       transition-delay: 0ms !important;
     }
-    .reveal, .stagger > *, .hero .tagline, .hero .hero-cta, .hero .reel-frame, .hero .eyebrow, .hero h1 .char {
+    .reveal, .stagger > *, .hero .tagline, .hero .hero-cta, .hero .reel-frame, .hero .creds, .hero .eyebrow, .hero h1 .char {
       opacity: 1 !important;
       transform: none !important;
     }
   }
 
   /* ================================================================
-     LAYOUT (unchanged)
+     LAYOUT
      ================================================================ */
   .wrap { max-width: var(--max); margin: 0 auto; padding: 0 32px; }
   section { padding: 120px 0; position: relative; }
 
   /* ================================================================
-     NAV (slight refinement: tighter letter-spacing on logo)
+     NAV
      ================================================================ */
   nav {
     position: fixed;
@@ -369,9 +333,7 @@
   }
   nav .nav-links a:hover { color: var(--orange-glow); }
   nav .nav-links a:hover::after { width: 100%; }
-  @media (max-width: 720px) {
-    nav .nav-links { display: none; }
-  }
+  @media (max-width: 720px) { nav .nav-links { display: none; } }
 
   /* ================================================================
      HERO
@@ -396,21 +358,17 @@
     font-size: clamp(48px, 9vw, 140px);
     margin-bottom: 28px;
     max-width: 1000px;
-    /* preserve line breaks between inline-block .char spans */
     line-height: 1.05;
   }
-  .hero h1 em {
-    font-style: italic;
-    color: var(--orange);
-  }
+  .hero h1 em { font-style: italic; color: var(--orange); }
   .hero h1 br { line-height: 0; }
   .hero .tagline {
     font-family: var(--serif);
     font-style: italic;
     font-size: clamp(18px, 2vw, 24px);
     color: var(--cream-dim);
-    max-width: 540px;
-    margin-bottom: 56px;
+    max-width: 620px;
+    margin-bottom: 40px;
     line-height: 1.4;
   }
   .hero-cta {
@@ -436,11 +394,26 @@
   .hero-cta .arrow { font-size: 16px; transition: transform 0.3s; }
   .hero-cta:hover .arrow { transform: translateX(4px); }
 
+  /* Credential strip */
+  .creds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 36px;
+    margin-top: 44px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+  }
+  .creds strong { color: var(--orange); font-weight: 600; }
+
   /* ================================================================
      HERO REEL
      ================================================================ */
   .reel-frame {
-    margin-top: 96px;
+    margin-top: 60px;
     aspect-ratio: 16/9;
     background: var(--ink);
     border: 1px solid var(--line);
@@ -454,6 +427,18 @@
     border: 0;
     display: block;
     object-fit: cover;
+  }
+  .reel-frame .reel-label {
+    position: absolute;
+    left: 0; bottom: 0;
+    padding: 10px 18px;
+    background: linear-gradient(90deg, rgba(10,9,8,0.85), rgba(10,9,8,0));
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    pointer-events: none;
+    z-index: 2;
   }
   .reel-placeholder {
     width: 100%;
@@ -501,10 +486,7 @@
     flex-wrap: wrap;
     gap: 16px;
   }
-  .section-head h2 {
-    font-size: clamp(36px, 5vw, 64px);
-    max-width: 700px;
-  }
+  .section-head h2 { font-size: clamp(36px, 5vw, 64px); max-width: 700px; }
   .section-head .meta {
     color: var(--cream-dim);
     font-size: 13px;
@@ -520,22 +502,20 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 32px;
   }
-  @media (max-width: 760px) {
-    .work-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 760px) { .work-grid { grid-template-columns: 1fr; } }
+
   .work-card {
     background: var(--ink);
     border: 1px solid var(--line);
     overflow: hidden;
     transition: all 0.4s;
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
-  .work-card:hover {
-    border-color: var(--orange);
-    transform: translateY(-4px);
-  }
+  .work-card:hover { border-color: var(--orange); transform: translateY(-4px); }
   .work-card .thumb {
-    aspect-ratio: 9/16;
+    aspect-ratio: 16/9;
     background: var(--black);
     position: relative;
     overflow: hidden;
@@ -543,39 +523,212 @@
   .work-card .thumb iframe,
   .work-card .thumb video {
     width: 100%; height: 100%; border: 0;
-    object-fit: cover;
-    display: block;
+    object-fit: cover; display: block;
   }
-  .work-card .thumb-empty {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--cream-dim);
-    font-size: 11px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    background:
-      linear-gradient(135deg, rgba(192,74,26,0.04), transparent),
-      repeating-linear-gradient(45deg, transparent 0 16px, rgba(192,74,26,0.04) 16px 17px);
-  }
+
   .work-card .meta {
-    padding: 20px 24px;
+    padding: 22px 24px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 16px;
+    flex-grow: 1;
   }
   .work-card .meta .title {
     font-family: var(--serif);
-    font-size: 20px;
+    font-size: 21px;
     color: var(--cream);
+    line-height: 1.25;
+  }
+  .work-card .meta .sub {
+    font-size: 12.5px;
+    color: var(--cream-dim);
+    margin-top: 7px;
   }
   .work-card .meta .cat {
     font-size: 10px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--orange);
+    white-space: nowrap;
+    padding-top: 5px;
+  }
+
+  /* CTA card */
+  .work-card.cta {
+    border-style: dashed;
+    border-color: rgba(192,74,26,0.42);
+    background:
+      linear-gradient(135deg, rgba(192,74,26,0.05), transparent),
+      var(--ink);
+  }
+  .work-card.cta .cta-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 56px 40px;
+    text-align: center;
+    gap: 16px;
+    align-items: center;
+  }
+  .work-card.cta .cta-title {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--cream);
+    line-height: 1.15;
+  }
+  .work-card.cta .cta-sub {
+    font-size: 13.5px;
+    color: var(--cream-dim);
+    max-width: 300px;
+  }
+  .work-card.cta .cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 14px 28px;
+    border: 1px solid var(--orange);
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .work-card.cta .cta-link:hover { background: var(--orange); }
+
+  /* ================================================================
+     CASE STUDY
+     ================================================================ */
+  .case-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 64px;
+    align-items: center;
+  }
+  @media (max-width: 900px) { .case-grid { grid-template-columns: 1fr; gap: 44px; } }
+
+  .case-media {
+    aspect-ratio: 9/16;
+    max-height: 640px;
+    width: 100%;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+  }
+  .case-media iframe,
+  .case-media video {
+    width: 100%; height: 100%; border: 0; display: block; object-fit: cover;
+  }
+  .case-media .play { background: rgba(10,9,8,0.22); }
+  .case-media:hover .play { background: rgba(10,9,8,0.05); }
+  .case-media .play .circle { width: 74px; height: 74px; }
+
+  /* Poster + play button */
+  .poster {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,9,8,0.35);
+    transition: background 0.35s;
+    z-index: 2;
+  }
+  .work-card:hover .play { background: rgba(10,9,8,0.12); }
+  .play .circle {
+    width: 62px; height: 62px;
+    border: 1px solid rgba(242,232,213,0.7);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.35s;
+    backdrop-filter: blur(2px);
+  }
+  .work-card:hover .play .circle,
+  .case-media:hover .play .circle {
+    border-color: var(--orange);
+    background: rgba(192,74,26,0.22);
+    transform: scale(1.06);
+  }
+  .play .triangle {
+    width: 0; height: 0;
+    border-left: 14px solid var(--cream);
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+    margin-left: 4px;
+  }
+
+  .case-body h3 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 3.4vw, 44px);
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .case-body .case-kicker {
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 22px;
+  }
+  .case-body p {
+    font-size: 16px;
+    color: var(--cream-dim);
+    margin-bottom: 18px;
+    max-width: 540px;
+  }
+  .case-facts {
+    list-style: none;
+    margin: 30px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .case-facts li {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .case-facts li .k {
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 10px;
+    color: var(--cream-dim);
+    white-space: nowrap;
+    padding-top: 3px;
+  }
+  .case-facts li .v { color: var(--cream); text-align: right; }
+
+  .quote {
+    border-left: 2px solid var(--orange);
+    padding: 20px 26px;
+    margin: 34px 0 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--cream);
+  }
+  .quote footer {
+    margin-top: 14px;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
   }
 
   /* ================================================================
@@ -583,40 +736,48 @@
      ================================================================ */
   .about {
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
+    grid-template-columns: 0.8fr 1.2fr;
     gap: 80px;
     align-items: center;
   }
-  @media (max-width: 800px) {
-    .about { grid-template-columns: 1fr; gap: 40px; }
-  }
+  @media (max-width: 800px) { .about { grid-template-columns: 1fr; gap: 40px; } }
+
   .about .portrait {
     aspect-ratio: 3/4;
     background: var(--ink);
     border: 1px solid var(--line);
     overflow: hidden;
     position: relative;
-  }
-  .about .portrait-empty {
-    width: 100%;
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--cream-dim);
-    font-size: 11px;
+  }
+  .about .portrait .monogram {
+    font-family: var(--serif);
+    font-size: clamp(76px, 13vw, 140px);
+    color: var(--orange);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-shadow: 2px 0 0 rgba(192,74,26,0.28);
+  }
+  .about .portrait .monogram-sub {
+    position: absolute;
+    bottom: 26px; left: 0; right: 0;
+    text-align: center;
+    font-size: 10px;
     letter-spacing: 0.28em;
     text-transform: uppercase;
+    color: var(--cream-dim);
   }
   .about p {
     font-size: 17px;
     color: var(--cream-dim);
     margin-bottom: 20px;
-    max-width: 520px;
+    max-width: 540px;
   }
   .about p strong { color: var(--cream); font-weight: 500; }
   .about .signature {
-    margin-top: 36px;
+    margin-top: 30px;
     font-family: var(--serif);
     font-style: italic;
     color: var(--orange);
@@ -627,22 +788,18 @@
     padding-top: 24px;
     border-top: 1px solid var(--line);
     font-size: 12px;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--cream-dim);
+    line-height: 2.1;
   }
+  .about .gear-list b { color: var(--cream); font-weight: 500; }
 
   /* ================================================================
      PACKAGES
      ================================================================ */
-  .packages {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-  @media (max-width: 900px) {
-    .packages { grid-template-columns: 1fr; }
-  }
+  .packages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .packages { grid-template-columns: 1fr; } }
   .pkg {
     background: var(--ink);
     border: 1px solid var(--line);
@@ -657,14 +814,11 @@
     background: linear-gradient(180deg, var(--ink), rgba(192,74,26,0.06));
     transform: translateY(-4px);
   }
-  .pkg.featured {
-    border-color: var(--orange);
-  }
+  .pkg.featured { border-color: var(--orange); }
   .pkg.featured::before {
     content: "MOST BOOKED";
     position: absolute;
-    top: -10px;
-    left: 32px;
+    top: -10px; left: 32px;
     background: var(--orange);
     color: var(--cream);
     padding: 4px 12px;
@@ -693,11 +847,7 @@
     text-transform: uppercase;
     margin-bottom: 28px;
   }
-  .pkg ul {
-    list-style: none;
-    margin-bottom: 32px;
-    flex-grow: 1;
-  }
+  .pkg ul { list-style: none; margin-bottom: 32px; flex-grow: 1; }
   .pkg ul li {
     padding: 12px 0;
     border-bottom: 1px solid var(--line);
@@ -706,10 +856,7 @@
     display: flex;
     gap: 10px;
   }
-  .pkg ul li::before {
-    content: "→";
-    color: var(--orange);
-  }
+  .pkg ul li::before { content: "→"; color: var(--orange); }
   .pkg ul li:last-child { border-bottom: 0; }
   .pkg .pkg-cta {
     display: block;
@@ -724,18 +871,9 @@
     text-transform: uppercase;
     transition: all 0.3s;
   }
-  .pkg .pkg-cta:hover {
-    background: var(--orange);
-    border-color: var(--orange);
-  }
-  .pkg.featured .pkg-cta {
-    background: var(--orange);
-    border-color: var(--orange);
-  }
-  .pkg.featured .pkg-cta:hover {
-    background: var(--orange-glow);
-    border-color: var(--orange-glow);
-  }
+  .pkg .pkg-cta:hover { background: var(--orange); border-color: var(--orange); }
+  .pkg.featured .pkg-cta { background: var(--orange); border-color: var(--orange); }
+  .pkg.featured .pkg-cta:hover { background: var(--orange-glow); border-color: var(--orange-glow); }
 
   /* ================================================================
      CONTACT
@@ -746,19 +884,9 @@
     gap: 80px;
     align-items: start;
   }
-  @media (max-width: 800px) {
-    .contact-inner { grid-template-columns: 1fr; gap: 40px; }
-  }
-  .contact h2 {
-    font-size: clamp(40px, 6vw, 80px);
-    margin-bottom: 32px;
-  }
-  .contact p {
-    font-size: 18px;
-    color: var(--cream-dim);
-    margin-bottom: 16px;
-    max-width: 480px;
-  }
+  @media (max-width: 800px) { .contact-inner { grid-template-columns: 1fr; gap: 40px; } }
+  .contact h2 { font-size: clamp(40px, 6vw, 80px); margin-bottom: 32px; }
+  .contact p { font-size: 18px; color: var(--cream-dim); margin-bottom: 16px; max-width: 480px; }
   .contact .email-link {
     display: inline-block;
     margin-top: 24px;
@@ -796,10 +924,7 @@
   }
   .contact-form input:focus,
   .contact-form textarea:focus,
-  .contact-form select:focus {
-    outline: 0;
-    border-color: var(--orange);
-  }
+  .contact-form select:focus { outline: 0; border-color: var(--orange); }
   .contact-form textarea { min-height: 120px; resize: vertical; }
   .contact-form button {
     padding: 16px;
@@ -831,11 +956,7 @@
     flex-wrap: wrap;
     gap: 16px;
   }
-  footer .copy {
-    color: var(--cream-dim);
-    font-size: 12px;
-    letter-spacing: 0.16em;
-  }
+  footer .copy { color: var(--cream-dim); font-size: 12px; letter-spacing: 0.16em; }
   footer .socials { display: flex; gap: 24px; }
   footer .socials a {
     color: var(--cream-dim);
@@ -867,6 +988,7 @@
   <div class="logo">EZL<span>·</span>FILMS</div>
   <div class="nav-links">
     <a href="#work">Work</a>
+    <a href="#case">Case Study</a>
     <a href="#about">About</a>
     <a href="#packages">Services</a>
     <a href="#contact">Contact</a>
@@ -880,20 +1002,33 @@
     <div class="lens-flare"></div>
     <div class="lens-flare secondary"></div>
 
-    <div class="eyebrow">Cinematic Short-Form Video · Los Angeles</div>
+    <div class="eyebrow">Live Event Coverage &amp; Cinematic Short-Form · Los Angeles</div>
     <h1 class="display"><span class="title-line">Real Stories.</span><br/><em><span class="title-line">Real People.</span></em></h1>
-    <p class="tagline">A SoCal filmmaker shooting cinematic 30-second stories for small businesses, founders, and the people behind them.</p>
+    <p class="tagline">A SoCal filmmaker covering live events and shooting short-form stories for small businesses, founders, and the people behind them.</p>
     <a href="#contact" class="hero-cta">Start a Project <span class="arrow">→</span></a>
 
+    <div class="creds">
+      <span><strong>School Media Ambassador</strong> · Flintridge Prep</span>
+      <span><strong>Festival Winner</strong> · School Film Fest</span>
+      <span><strong>Director · Filmmaker · Editor</strong></span>
+      <span><strong>@ezlfilms</strong></span>
+    </div>
+
     <div class="reel-frame">
-        <iframe src="https://www.youtube.com/embed/@EZLfilms?autoplay=1&loop=1&mute=1" title="EZL Films YouTube Channel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-      </div>
+      <iframe
+        src="https://www.youtube.com/embed/iaYti9GwBhQ?autoplay=1&loop=1&mute=1&playlist=iaYti9GwBhQ&rel=0&modestbranding=1"
+        title="How I Shot Cinematic Video for My School's Track Meet"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen loading="lazy"></iframe>
+      <div class="reel-label">Featured Reel · Live Event Coverage</div>
+    </div>
+  </div>
 </header>
 
 <div class="divider"></div>
 
 <!-- ============ WORK ============ -->
-<!-- LIVE_WORK_UPDATE_2026_10_18_CASE_STUDY_v1 -->
+<!-- LIVE_WORK_UPDATE_2026_10_19_REBUILD_v3 -->
 <section id="work">
   <div class="wrap">
     <div class="section-head reveal">
@@ -905,49 +1040,107 @@
     </div>
 
     <div class="work-grid stagger">
-      <a href="https://www.instagram.com/p/Dec_AkuNHCe/" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: block;">
-        <div class="work-card">
-          <div class="thumb">
-            <div class="thumb-empty">Watch the reel →</div>
-          </div>
-          <div class="meta">
-            <div>
-              <div class="title">Independent Schools Showcase</div>
-              <div style="font-size: 10px; color: var(--cream-dim); margin-top: 4px; letter-spacing: 0.16em; text-transform: uppercase;">Flintridge Prep · Oct 2026</div>
-            </div>
-            <div class="cat">Live Event</div>
-          </div>
+
+      <div class="work-card">
+        <div class="thumb">
+          <iframe
+            src="https://www.youtube.com/embed/iaYti9GwBhQ?rel=0&modestbranding=1"
+            title="How I Shot Cinematic Video for My School's Track Meet"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
         </div>
+        <div class="meta">
+          <div>
+            <div class="title">Cinematic Coverage of a School Track Meet</div>
+            <div class="sub">Full-process breakdown — camera angles, lenses, and the edit</div>
+          </div>
+          <div class="cat">Live Event</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="thumb">
+          <iframe
+            src="https://www.youtube.com/embed/adA7L8TBksE?rel=0&modestbranding=1"
+            title="BTS: Shooting a Track Meet"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="meta">
+          <div>
+            <div class="title">Behind the Scenes: Shooting a Track Meet</div>
+            <div class="sub">On-set walkthrough of a live event production</div>
+          </div>
+          <div class="cat">BTS</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="thumb">
+          <iframe
+            src="https://www.youtube.com/embed/6jNe2cqtA94?rel=0&modestbranding=1"
+            title="DJI Mini 4 Pro vs 35 MPH Winds"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="meta">
+          <div>
+            <div class="title">Aerial Test: DJI Mini 4 Pro in 35 MPH Winds</div>
+            <div class="sub">Field test — how much wind a sub-250g drone actually takes</div>
+          </div>
+          <div class="cat">Aerial</div>
+        </div>
+      </div>
+
+      <div class="work-card cta">
+        <div class="cta-body">
+          <div class="cta-title">Your business, next.</div>
+          <div class="cta-sub">Tell me what you're working on. I'll reply within 24 hours with a price and a date.</div>
+          <a href="#contact" class="cta-link">Start a Project <span class="arrow">→</span></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ CASE STUDY ============ -->
+<section id="case">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">Featured Case Study</div>
+        <h2 class="display">Commissioned<br/>by the school.</h2>
+      </div>
+      <div class="meta">Client work · Published</div>
+    </div>
+
+    <div class="case-grid">
+      <a class="case-media reveal" href="https://www.instagram.com/p/Dec_AkuNHCe/" target="_blank" rel="noopener" style="text-decoration:none;display:block;">
+        <img class="poster" src="https://img.youtube.com/vi/iaYti9GwBhQ/hqdefault.jpg" alt="Independent Schools Showcase — film for Flintridge Prep" />
+        <div class="play"><div class="circle"><div class="triangle"></div></div></div>
       </a>
 
-      <div class="work-card">
-        <div class="thumb">
-          <div class="thumb-empty">Drop reel #2 here</div>
-        </div>
-        <div class="meta">
-          <div class="title">Project Two</div>
-          <div class="cat">Founder</div>
-        </div>
-      </div>
+      <div class="case-body reveal">
+        <div class="case-kicker">Flintridge Prep · October 2026</div>
+        <h3>Independent Schools Showcase</h3>
+        <p>Flintridge Prep co-hosted an event bringing families and representatives from more than 20 schools together for admissions and financial-aid conversations. The communications team needed a film people would actually watch — not just post.</p>
+        <p>I wrote the treatment, shot the event, and cut the final film. It ran on the school's official channels and in their admissions outreach, with my name credited on the publish.</p>
 
-      <div class="work-card">
-        <div class="thumb">
-          <div class="thumb-empty">Drop reel #3 here</div>
-        </div>
-        <div class="meta">
-          <div class="title">Project Three</div>
-          <div class="cat">Real Estate</div>
-        </div>
-      </div>
+        <ul class="case-facts">
+          <li><span class="k">Client</span><span class="v">Flintridge Preparatory School</span></li>
+          <li><span class="k">Scope</span><span class="v">Direct · Film · Edit</span></li>
+          <li><span class="k">Format</span><span class="v">Vertical social film · 50 sec</span></li>
+          <li><span class="k">Published</span><span class="v">@flintridgeprep · 118 likes</span></li>
+          <li><span class="k">Used for</span><span class="v">Admissions + open house drive</span></li>
+        </ul>
 
-      <div class="work-card">
-        <div class="thumb">
-          <div class="thumb-empty">Drop reel #4 here</div>
-        </div>
-        <div class="meta">
-          <div class="title">Project Four</div>
-          <div class="cat">Creator</div>
-        </div>
+        <blockquote class="quote">
+          "Ninth grader Ethan L. has put his passion for storytelling to work in support of the event through directing, filming and editing the video above."
+          <footer>— Flintridge Preparatory School</footer>
+        </blockquote>
       </div>
     </div>
   </div>
@@ -960,20 +1153,24 @@
   <div class="wrap">
     <div class="about">
       <div class="portrait reveal">
-        <div class="portrait-empty">Your photo here</div>
+        <div class="monogram">EZ</div>
+        <div class="monogram-sub">Ethan Lau · Los Angeles</div>
       </div>
       <div class="reveal">
         <div class="eyebrow" style="margin-bottom: 16px;">About</div>
         <h2 class="display" style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 32px;">Filmmaker<br/>in Los Angeles.</h2>
-        <p>Hi, I'm <strong>Ethan</strong> — a filmmaker based in LA. I shoot cinematic, short-form video for small businesses that hate looking like everyone else.</p>
+        <p>Hi, I'm <strong>Ethan</strong> — a filmmaker based in LA. I cover live events and shoot cinematic short-form video for small businesses that hate looking like everyone else.</p>
         <p>Every project starts with one question: <strong>what's the real story?</strong> Not the polished version. The one people actually remember.</p>
         <p>No templates. No stock footage. No AI slop. Just real footage, real light, and the camera doing what it was built to do.</p>
-        <blockquote style="border-left: 2px solid var(--orange); padding: 16px 24px; margin: 32px 0; font-family: var(--serif); font-style: italic; font-size: 18px; line-height: 1.5; color: var(--cream);">
-          "Ninth grader Ethan L. has put his passion for storytelling to work through directing, filming, and editing."
-          <footer style="margin-top: 12px; font-family: var(--sans); font-style: normal; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-dim);">— Flintridge Preparatory School, 2026</footer>
-        </blockquote>
+        <p>I'm the school's media ambassador at Flintridge Prep, where I direct, film, and edit event coverage for institutional channels — and my school film fest entry took first place.</p>
         <div class="signature">— Ethan</div>
-        <div class="gear-list">Lumix S5II · 16-35 / 24-70 / 50mm · LA</div>
+        <div class="gear-list">
+          <b>Camera</b> · Lumix S5II · Sony FX3<br/>
+          <b>Lenses</b> · 16–35 f/2.8 · 24–70 f/2.8 · 50mm f/1.8<br/>
+          <b>Support</b> · Gimbal · Shotgun + lav mics<br/>
+          <b>Edit</b> · DaVinci Resolve · Lightroom<br/>
+          <b>Base</b> · Los Angeles, CA
+        </div>
       </div>
     </div>
   </div>
@@ -996,7 +1193,7 @@
       <div class="pkg">
         <div class="name">Cut</div>
         <div class="price">$400</div>
-        <div class="price-note">One reel · 3-day turnaround</div>
+        <div class="price-note">One reel · 5-day turnaround</div>
         <ul>
           <li>60–90 min on-location shoot</li>
           <li>1× 30-sec vertical reel (9:16)</li>
@@ -1011,7 +1208,7 @@
       <div class="pkg featured">
         <div class="name">Cut+</div>
         <div class="price">$800</div>
-        <div class="price-note">Reel + BTS · 5-day turnaround</div>
+        <div class="price-note">Reel + story · 7-day turnaround</div>
         <ul>
           <li>Everything in Cut</li>
           <li>1× 60-sec story / BTS edit</li>
@@ -1022,17 +1219,17 @@
       </div>
 
       <div class="pkg">
-        <div class="name">Content Day</div>
+        <div class="name">Event Day</div>
         <div class="price">$1,500</div>
-        <div class="price-note">3-hour shoot · 7-day turnaround</div>
+        <div class="price-note">Half-day coverage · 10-day turnaround</div>
         <ul>
-          <li>3-hour on-location shoot</li>
+          <li>Up to 4-hour on-location shoot</li>
           <li>4× 30-sec reels</li>
           <li>30 color-graded stills</li>
-          <li>A month of content in one afternoon</li>
+          <li>Live event or content day</li>
           <li>1 round of revisions</li>
         </ul>
-        <a href="#contact" class="pkg-cta">Book Content Day</a>
+        <a href="#contact" class="pkg-cta">Book Event Day</a>
       </div>
     </div>
   </div>
@@ -1072,7 +1269,7 @@
             <option value="">Pick one…</option>
             <option value="cut">Cut — $400</option>
             <option value="cut+">Cut+ — $800</option>
-            <option value="content-day">Content Day — $1,500</option>
+            <option value="event-day">Event Day — $1,500</option>
             <option value="custom">Something custom</option>
           </select>
         </div>
