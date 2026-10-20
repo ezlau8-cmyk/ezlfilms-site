@@ -1,79 +1,91 @@
 #!/usr/bin/env bash
 # ============================================================================
-#  EZL Films — Cloudflare Pages Deploy (v2 — fixes macOS npm EACCES)
+#  EZL Films — Cloudflare Pages Deploy (v3 — token path, works unattended)
+#
+#  WHY THIS FILE EXISTS:
+#    The GitHub → Cloudflare auto-deploy integration is disconnected, so a
+#    `git push` does NOT redeploy. Every deploy must be an explicit wrangler
+#    call. This script wraps that call so it is one command on this box.
+#
+#  CREDENTIALS (both required):
+#    CLOUDFLARE_API_TOKEN  — read from /root/.config/.wrangler/.cf_token (chmod 600)
+#                            Token permission MUST be: Account → Cloudflare Pages → Edit
+#                            (NOT "Access: Custom Pages" — that is login-page branding
+#                             and produces "Authentication error 10000")
+#    CLOUDFLARE_ACCOUNT_ID — bf78ecd984f8b4d34fdb41af2f999add
+#
+#  USAGE:
+#    ./deploy.sh
+#
+#  VERIFICATION (content-verification required, not just HTTP 200):
+#    curl -s https://ezlfilms-site.pages.dev/ | grep "LIVE_WORK_UPDATE"
+#    If that prints nothing, the deploy did NOT pick up the latest commit.
+#    NOTE: web_extract returns a STALE cached copy — use curl or a browser fetch.
 # ============================================================================
 
-set -e
+set -euo pipefail
 
-REPO="ezlau8-cmyk/ezlfilms-site"
 PROJECT_NAME="ezlfilms-site"
+ACCOUNT_ID="bf78ecd984f8b4d34fdb41af2f999add"
+TOKEN_FILE="/root/.config/.wrangler/.cf_token"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo ""
 echo "  EZL Films — Cloudflare Pages Deploy"
 echo "  ===================================="
 echo ""
 
-# Check Node
-if ! command -v node >/dev/null 2>&1; then
-  echo "  ✗ Node.js not found."
-  echo ""
-  echo "  Install it from https://nodejs.org (download the LTS version)."
-  echo "  Then re-run this script."
-  exit 1
-fi
-echo "  ✓ Node $(node --version)"
-
-# Install wrangler to a user-owned prefix (no sudo required, no EACCES)
-NPM_PREFIX="$HOME/.npm-global"
-mkdir -p "$NPM_PREFIX"
-npm config set prefix "$NPM_PREFIX"
-export PATH="$NPM_PREFIX/bin:$PATH"
-
-# Persist PATH for future shells
-if ! grep -q "$NPM_PREFIX/bin" "$HOME/.zshrc" 2>/dev/null; then
-  echo "" >> "$HOME/.zshrc"
-  echo "# npm global (added by EZL Films deploy script)" >> "$HOME/.zshrc"
-  echo "export PATH=\"$NPM_PREFIX/bin:\$PATH\"" >> "$HOME/.zshrc"
-  echo "  ✓ Added $NPM_PREFIX/bin to ~/.zshrc PATH"
-fi
-
+# ── Preflight ──────────────────────────────────────────────────────────────
 if ! command -v wrangler >/dev/null 2>&1; then
-  echo "  → Installing wrangler to $NPM_PREFIX (no sudo needed)..."
-  npm install -g wrangler 2>&1 | tail -3
+  echo "  ✗ wrangler not found."
+  echo "    Install: npm install -g wrangler"
+  exit 1
 fi
 echo "  ✓ wrangler $(wrangler --version 2>&1 | head -1)"
 
-echo ""
-echo "  Step 2/4: Log into Cloudflare"
-echo "  A browser tab will open. Approve the login."
-echo "  (If no browser opens, copy the URL wrangler prints.)"
-echo ""
+if [ ! -f "$TOKEN_FILE" ]; then
+  echo "  ✗ No API token at $TOKEN_FILE"
+  echo "    Create one at https://dash.cloudflare.com/profile/api-tokens"
+  echo "    with permission: Account → Cloudflare Pages → Edit"
+  echo "    and Account Resources → All accounts."
+  exit 1
+fi
+chmod 600 "$TOKEN_FILE"
+export CLOUDFLARE_API_TOKEN="$(cat "$TOKEN_FILE")"
+export CLOUDFLARE_ACCOUNT_ID="$ACCOUNT_ID"
+echo "  ✓ Token loaded (chmod 600) · account $ACCOUNT_ID"
 
-wrangler login
+# Confirm the token can actually SEE the project before deploying.
+if ! curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+     "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects/$PROJECT_NAME" \
+     | grep -q '"name"'; then
+  echo "  ✗ Token cannot access project '$PROJECT_NAME' on account $ACCOUNT_ID."
+  echo "    Check the token's Permissions dropdown says 'Cloudflare Pages'"
+  echo "    (not 'Access: Custom Pages') and Account Resources says 'All accounts'."
+  exit 1
+fi
+echo "  ✓ Project '$PROJECT_NAME' accessible"
+
+# ── Commit anything outstanding, then deploy ──────────────────────────────
+cd "$SCRIPT_DIR"
+if [ -n "$(git status --porcelain)" ]; then
+  echo "  → Committing outstanding changes"
+  git add -A
+  git commit -m "Deploy $(date +%Y-%m-%d\ %H:%M)" || true
+  git push origin main || true
+fi
 
 echo ""
-echo "  Step 3/4: Creating Cloudflare Pages project linked to your GitHub repo"
-echo ""
-
-wrangler pages project create "$PROJECT_NAME" \
-  --production-branch=main \
-  --compatibility-date=2024-01-01 2>&1 | tail -5 || true
-
-echo ""
-echo "  Step 4/4: Triggering the first deploy"
-echo ""
-
+echo "  Deploying..."
 wrangler pages deploy . \
   --project-name="$PROJECT_NAME" \
   --branch=main \
-  --commit-dirty=true 2>&1 | tail -10
+  --commit-dirty=true 2>&1 | tail -8
 
 echo ""
 echo "  ===================================="
-echo "  ✓ Done."
+echo "  ✓ Done. Live at: https://${PROJECT_NAME}.pages.dev"
 echo ""
-echo "  Your live site is at:"
-echo "    https://${PROJECT_NAME}.pages.dev"
-echo ""
-echo "  (Cloudflare assigns the exact URL in the dashboard.)"
+echo "  Verify with:"
+echo "    curl -s https://${PROJECT_NAME}.pages.dev/ | grep 'LIVE_WORK_UPDATE'"
 echo ""
