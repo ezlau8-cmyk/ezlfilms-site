@@ -977,6 +977,13 @@
     nav { padding: 16px 20px; }
   }
 </style>
+<!-- No-JS fallback: reveal elements must never be permanently invisible -->
+<noscript><style>
+  .reveal, .stagger > *, .hero .tagline, .hero .hero-cta, .hero .reel-frame, .hero .creds, .hero .eyebrow, .hero h1 .char {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+</style></noscript>
 </head>
 <body>
 
@@ -1332,6 +1339,12 @@
     // Fallback: just show everything
     revealEls.forEach(function (el) { el.classList.add('in-view'); });
   }
+
+  // Safety net: if the observer never fires for an element, reveal it anyway.
+  // A scroll-reveal that never reveals is worse than no animation at all.
+  setTimeout(function () {
+    revealEls.forEach(function (el) { el.classList.add('in-view'); });
+  }, 2500);
 
   // Nav background strengthens once user has scrolled past the hero
   var nav = document.getElementById('nav');
