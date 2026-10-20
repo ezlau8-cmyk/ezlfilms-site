@@ -29,6 +29,11 @@
 <meta property="og:description" content="Live event coverage and cinematic short-form video for SoCal businesses and institutions. Los Angeles." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://ezlfilms-site.pages.dev" />
+<meta property="og:image" content="https://ezlfilms-site.pages.dev/ethan-og-1200x600.jpg" />
+<meta property="og:image:alt" content="Ethan Lau — filmmaker in Los Angeles" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="ethan-avatar-512.jpg" />
+<link rel="apple-touch-icon" href="ethan-avatar-512.jpg" />
 
 <!-- Google Fonts: Cormorant Garamond (display) + Inter (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -677,6 +682,13 @@
     align-items: center;
     justify-content: center;
   }
+  .about .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.94) contrast(1.03);
+  }
   .about .portrait .monogram {
     font-family: var(--serif);
     font-size: clamp(76px, 13vw, 140px);
@@ -1037,8 +1049,7 @@
   <div class="wrap">
     <div class="about">
       <div class="portrait reveal">
-        <div class="monogram">EZ</div>
-        <div class="monogram-sub">Ethan Lau · Los Angeles</div>
+        <img src="ethan-cinematic-3x4.jpg" alt="Ethan Lau — filmmaker in Los Angeles" />
       </div>
       <div class="reveal">
         <div class="eyebrow" style="margin-bottom: 16px;">About</div>
